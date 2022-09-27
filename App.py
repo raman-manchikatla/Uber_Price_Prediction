@@ -31,7 +31,7 @@ def weather(city):
     weather = soup.select('#wob_tm')[0].getText().strip()
     humidity = (soup.select("#wob_hm")[0].getText().strip())
     humidity=float(humidity.replace('%',""))
-    temp = round((float(weather))*1.8+ 32,2)
+    temp = round(float(weather))
     st.write(location,time)
     #st.write(time)
     st.write("Temperature : ",str(temp)+"°F") 
@@ -114,11 +114,8 @@ if st.button("Predict Fare"):
                       long_diff,lat_diff,manhattan_dist,])
     # 
     result = model.predict(prediction)
-    st.write("The Predicted Fare is :",result)
-    #model = model.reshape(1, 12)
-    #st.title("The Predicted Fare is  "+ str(int(np.exp(model.predict))))
-    # st.sucess("The Predicted Fare is :",
-    st.write("Distance : ",manhattan_dist)
+    st.write("The Predicted Fare is : $",abs(result*0.9))
+  
 
 
 # =========================================================================
@@ -138,5 +135,4 @@ elif sidebar == "Guide":
     st.header("Guide")
     st.image("promod_sir.jpg")
     st.header("""Pramod Kumar Sharma""")
-    st.write("""Chief Executive Officer pra-sami \n
-             Email : info@prasami.com""")
+  
