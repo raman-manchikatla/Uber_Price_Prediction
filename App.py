@@ -1,7 +1,6 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
-import bs4
 from bs4 import BeautifulSoup
 import requests
 import time
@@ -31,7 +30,7 @@ def weather(city):
     weather = soup.select('#wob_tm')[0].getText().strip()
     humidity = (soup.select("#wob_hm")[0].getText().strip())
     humidity=float(humidity.replace('%',""))
-    temp = round(float(weather))
+    temp = float(weather)
     st.write(location,time)
     #st.write(time)
     st.write("Temperature : ",str(temp)+"°F") 
@@ -45,7 +44,7 @@ st.title("Uber Ride Price Prediction Using Multiple Factors")
 
 
 # Live Wether 
-city = st.text_input("Enter Your City Name :-")
+city = st.text_input("Enter Your City Name :-","New York")
 city=city+" weather"
 temperature = weather(city)
 
@@ -59,37 +58,42 @@ st.info(date)
 passenger_count = st.selectbox("Passenger",np.arange(1,7))
 st.info(passenger_count)
 
-# hour = st.selectbox("Enter Hours",np.arange(0,24))
-# m = st.selectbox("Enter Minutes",np.arange(0,60,5))
+
 time = st.time_input("Enter Pickup Time ",datetime.time(0,00))
 st.info(time)
 
 # logitude and latitude for pickup
 street = st.text_input("Pickup Location ")
-#country = st.text_input("Country")
 
-lat,lon = get_location_by_address(street)
+lat,lon= get_location_by_address(street)
 
-st.write(lat,lon )
+st.write(lat,lon)
 
-p_lat = st.number_input("Enter Pickup Latitude ")
-p_lon = st.number_input("Enter Pickup Longitude")
+p_lat = st.number_input("Enter Pickup Latitude ",step=1e-6,format="%.4f")
+p_lon = st.number_input("Enter Pickup Longitude",step=1e-6,format="%.4f")
 
 
 # logitude and latitude for dropoff
 street1 = st.text_input("Dropoff Location ")
-#country1 = st.text_input("Country:")
 
 lat1,lon1= get_location_by_address(street1)
 
 st.write(lat1,lon1)
 
-d_lat = st.number_input("Enter Dropoff Latitude ")
-d_lon = st.number_input("Enter Dropoff Longitude")
+d_lat = st.number_input("Enter Dropoff Latitude ",step=1e-6,format="%.4f")
+d_lon = st.number_input("Enter Dropoff Longitude",step=1e-6,format="%.4f")
 
 
 map_data1 = pd.DataFrame({'lat': [p_lat,d_lat], 'lon': [p_lon,d_lon]})
 st.map(map_data1)
+
+
+
+
+
+
+
+
 
 
 
@@ -110,12 +114,11 @@ if st.button("Predict Fare"):
     
     prediction = np.array([p_lat,p_lon,d_lat,d_lon,passenger_count,time.hour,day,month,year,
                       dist_to_cent,pick_dist_to_jfk,drop_dist_to_jfk,
-                      pick_dist_to_ewr,drop_dist_to_ewr,pick_dist_to_lgr,drop_dist_to_lgr,
-                      long_diff,lat_diff,manhattan_dist,])
-    # 
+                     pick_dist_to_ewr,drop_dist_to_ewr,pick_dist_to_lgr,drop_dist_to_lgr,
+                       long_diff,lat_diff,manhattan_dist,temperature])
+      
     result = model.predict(prediction)
-    st.write("The Predicted Fare is : $",abs(result*0.9))
-  
+    st.write("The Predicted Fare is :  $",abs(result*0.9))
 
 
 # =========================================================================
@@ -135,4 +138,6 @@ elif sidebar == "Guide":
     st.header("Guide")
     st.image("promod_sir.jpg")
     st.header("""Pramod Kumar Sharma""")
+    st.write("""Chief Executive Officer pra-sami \n
+             Email : info@prasami.com""")
   
